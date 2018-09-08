@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router  } from "@angular/router";
 
 @Component({
   selector: 'app-signup',
@@ -7,9 +8,25 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignupComponent implements OnInit {
 
-  constructor() { }
+  constructor( public router: Router) {
+    console.log("signUp component called")
+   }
 
   ngOnInit() {
   }
+/**
+   * goToLogin 
+   */
+  public goToLogin = () => {
+    this.router.navigate(['/'])
+    
+  }
 
+  /**
+   * goToSignup
+   */
+  public goToSignup = () => {
+    this.router.navigate(['/signUp'])
+    
+  }
 }
