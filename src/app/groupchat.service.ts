@@ -53,7 +53,7 @@ export class GroupchatService {
     .set( 'password', data.password)
 
     let apiResponse = this.http.post(`${this.baseUrl}/login`, params)
-    console.log(apiResponse)
+   // console.log(apiResponse)
     return apiResponse
   }
 
@@ -82,6 +82,14 @@ export class GroupchatService {
         let apiResponse = this.http.put(`${this.baseUrl}/forgot`, params)
         return apiResponse
 
+  }
+
+  public logOut(data): Observable<any> {
+    const params = new HttpParams()
+    
+    .set( 'authToken', data.authToken)
+
+    return this.http.post(`${this.baseUrl}/${data.userId}/logout`, params)
   }
 
 }

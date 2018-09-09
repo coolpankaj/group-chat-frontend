@@ -26,6 +26,14 @@ export class ForgotPasswordComponent implements OnInit {
     $('#newPassword').hide();
   }
 
+  public goToLogin = () => {
+    this.router.navigate(['/'])
+  }
+
+  public goToSignup = () => {
+    this.router.navigate(['/signUp'])
+  }
+
   public controlView = () => {
     $('#resendMail').hide();
     $('#newPassword').show();

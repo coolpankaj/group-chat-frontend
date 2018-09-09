@@ -5,6 +5,7 @@ import { GroupchatService } from './../../groupchat.service';
 import { CookieService } from 'ngx-cookie-service';
 
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -69,11 +70,14 @@ export class LoginComponent implements OnInit {
         if (apiResponse.status === 200 ) {
 
          
-          this.cookie.set('authtoken', apiResponse.data.authToken);
+          this.cookie.set('authToken', apiResponse.data.authToken);
           this.cookie.set('receiverId', apiResponse.data.userDetails.userId);
           this.cookie.set('receiverName', apiResponse.data.userDetails.firstName + ' ' + apiResponse.data.userDetails.lastName);
           this.groupChat.setUserInfoInLocalStorage(apiResponse.data.userDetails);
           this.toastr.success(apiResponse.message)
+          setTimeout(() => {
+            this.router.navigate(['/defaultChatRoom'])
+          }, 1500);
          
         } else  {
          

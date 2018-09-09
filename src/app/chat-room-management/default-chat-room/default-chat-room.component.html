@@ -1,0 +1,242 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12 displayNoneMobile col-sm-4 col-md-4 people-list p-0" id="people-list">
+
+      <div class="p-3 text-white textCapitalize textCenter">
+        <div class="d-flex justify-content-between">
+          <div>
+            <i class="fa fa-circle online" *ngIf="disconnectedSocket == false"></i>
+            <i class="fa fa-circle offline" *ngIf="disconnectedSocket == true"></i>{{userInfo.firstName}}
+            {{userInfo.lastName}}
+          </div>
+          <div>
+            <!-- <button class="btn btn-secondary btn-sm" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+              aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">click me
+            </button> -->
+          </div>
+        </div>
+        <br />
+        <button (click)="logOut()" class="btn btn-info customButton">Logout</button>
+      </div>
+      <div class="navbar-collapse" id="navbarSupportedContent">
+        <div style="margin-left:1%">
+          <ul class="list-group">
+            <li class="list-group-item" style="background-color:#3D3F4A; color: white;">
+              <div class="d-flex justify-content-between">
+                <div><b>Online Users</b></div>
+                <!-- <div><span (click)="refreshOnlineUser()"><button type="button" class="btn btn-secondary btn-sm">refresh</button></span>
+                </div> -->
+              </div>
+            </li>
+            <div>
+              <!-- <li class="userPresence" style="margin-left:1%;color: white;" 
+            *ngFor="let user of userList">
+            <div *ngIf="user.userId != userInfo.userId">
+  
+              <!-- code to display individual users 
+  
+                {{user.name}}
+  
+              <!-- code to display individual users 
+            </div>
+          </li>-->
+              <ul class="list-group userPresence;">
+                <div #scrollMee [scrollTop]="scrollMee.scrollHeight" class="onlineUserList">
+                  <div *ngFor="let user of userList">
+                    <div *ngIf="user.userId != userInfo.userId">
+                      <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px; ">
+                        <div class="d-flex justify-content-between">
+                          <div>{{user.name}}</div>
+                        </div>
+                      </li>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </ul>
+
+        </div>
+        <br />
+        <div style="margin-left:1%;margin-top: 1%;">
+          <ul class="list-group">
+            <li class="list-group-item" style="background-color:#3D3F4A; color: white;">
+              <div class="d-flex justify-content-between">
+                <div><b>
+                    Create/Edit room </b></div>
+                <div><span *ngIf="canEdit === 1"><button type="button" data-toggle="modal" data-target="#exampleModalCenter2"
+                      class="btn btn-secondary btn-sm">edit</button></span>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <button type="button" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-secondary btn-sm">create</button></div>
+              </div>
+            </li>
+            <div>
+              <!-- Button trigger modal -->
+
+
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Please give your room name</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form>
+                        <div class="form-group">
+                          <input type="text" class="form-control" name="nameOfRoom" id="nameOfRoom" placeholder="room-name"
+                            style="background-color: white; color: black;">
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" (click)="connectToRoom()" data-dismiss="modal">Save
+                        changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <li class="userPresence" style="margin-left:1%;color: white;">
+
+              </li>
+            </div>
+          </ul>
+
+        </div>
+
+
+
+        <div style="margin-left:1%">
+          <ul class="list-group">
+            <li class="list-group-item" style="background-color:#3D3F4A; color: white;">
+              <div class="d-flex justify-content-between">
+                <div><b>Active Rooms</b></div>
+                <div><span (click)="refresh()"><button type="button" class="btn btn-secondary btn-sm">refresh</button></span>
+                </div>
+              </div>
+            </li>
+            <div>
+              <!--<li class="userPresence" style="margin-left:1%;color: white;">
+              <div *ngFor="let room of roomList">
+  
+                  code to display individual users
+      
+                    {{room}}<button type="button" class="btn btn-secondary btn-sm">edit</button><span (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button></span>
+      
+                  <-- code to display individual users
+                </div>
+              </li> -->
+              <ul class="list-group userPresence">
+                <div class="onlineAvailableRooms" id="style1">
+                  <div *ngFor="let room of roomList">
+                    <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px;">
+                      <div class="d-flex justify-content-between">
+                        <div>{{room}}</div>
+                        <div><span (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button></span></div>
+                      </div>
+                    </li>
+                  </div>
+                </div>
+                <!--modal for editing purposes-->
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalCenter2" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                  aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Enter your new room name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form>
+                          <div class="form-group">
+                            <input type="text" class="form-control" name="editRoom" id="editOfRoom" placeholder="edit your room name"
+                              style="background-color: white; color: black;">
+                          </div>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" (click)="editToRoom()" data-dismiss="modal">Save
+                          changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ul>
+            </div>
+          </ul>
+
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- end chat -->
+    <div class="col-12 col-sm-8 col-md-8 chat">
+      <!-- end chat-history -->
+      <div class="chat-header clearfix mobileMenu">
+        <div class="chat-about">
+          <span class="crop" [style.color]="userColor ? userColor :'white'" [style.background]="userBg ? userBg :'blue'"
+            *ngIf="connectedRoom">
+            {{connectedRoom.charAt(0)}}</span>&nbsp;&nbsp;&nbsp;
+          <div class="chat-with">{{connectedRoom}}
+            <div *ngIf="typingPersonName" style="color:#aff981">{{typingPersonName}} is typing..</div>
+            <div *ngIf="typingPersonNamee" style="color: #F2F5F8;">{{typingPersonNamee}}</div>
+          </div>
+        </div>
+      </div>
+      <div #scrollMe [scrollTop]="(scrollToChatTop)?0:scrollMe.scrollHeight" class="chat-history onlineUserList">
+
+        <ul style="list-style: none">
+          <li class="textCenter">
+
+            <span *ngIf="loadingPreviousChat == true">Loading...</span>
+            <span class="cursorPointer" (click)="loadEarlierPageOfChat()">Load Previous Chat</span>
+            <br>
+            <br />
+            <span *ngIf="connectedRoom">You joined {{connectedRoom}}</span>
+          </li>
+          <li class="clearfix" *ngFor="let message of messageList">
+            <div class="message-data" [ngClass]="{'align-right': message.senderId == userInfo.userId}">
+              <span class="message-data-time">{{message?.createdOn | date: 'medium' }}</span> &nbsp; &nbsp;
+              <span class="message-data floatLeft" *ngIf="message.senderId != userInfo.userId">
+                <i class="fa fa-circle online"></i> {{ message?.senderName }}</span>
+              <span class="message-data-name" *ngIf="message.senderId == userInfo.userId">{{ message?.senderName }}</span>
+              <i class="fa fa-circle me" *ngIf="message.senderId == userInfo.userId"></i>
+
+            </div>
+            <span *ngIf="message.senderId != userInfo.userId"><br /></span>
+            <div class="message" [ngClass]="{'float-right other-message': message.senderId == userInfo.userId, 'my-message': message.senderId != userInfo.userId}">
+              {{message?.message}}
+            </div>
+          </li>
+
+        </ul>
+      </div>
+      <div class="chat-message clearfix p-2">
+        <div class="d-flex justify-content-start flex-fill bd-highlight">
+          <div class="p-2 flex-fill bd-highlight"><textarea name="message-to-send" (keydown)="sendMessageUsingKeyPress($event)"
+              id="typingPerson" placeholder="Type your message" class="form-control" rows="3">
+
+          </textarea></div>
+          <div><button (click)="sendMessage()">Send</button></div>
+        </div>
+        <!-- end chat-message -->
+
+      </div>
+    </div>
+    <!-- <div>
+        <input style="width:60%" type="text" [(ngModel)]="messageText" name="messageToSend" id="typingPerson">
+        <button id="send" style="width:10em" (click)="sendMessage()">send</button>
+  </div>-->
+
+  </div>
+  <!-- end container -->
