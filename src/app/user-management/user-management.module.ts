@@ -13,7 +13,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild([
-      { path: 'signUp', component: SignupComponent, pathMatch: 'full' }
+      { path: 'signUp', component: SignupComponent, pathMatch: 'full' },
+      { path: 'forgot-password', component: ForgotPasswordComponent, pathMatch: 'full'}
     ])
   ],
   declarations: [LoginComponent, ForgotPasswordComponent, SendResetCodeToMailComponent, SignupComponent]

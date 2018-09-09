@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { GroupchatService } from './../../groupchat.service'
+import { GroupchatService } from './../../groupchat.service';
+import { CookieService } from 'ngx-cookie-service';
 
 
 @Component({
@@ -14,7 +15,7 @@ export class LoginComponent implements OnInit {
   public email: String;
   public password: any;
 
-  constructor(public router: Router, public toastr: ToastrService, public groupChat: GroupchatService) { 
+  constructor(public router: Router, public toastr: ToastrService, public groupChat: GroupchatService, public cookie: CookieService) { 
     console.log("login component called")
   }
 
@@ -38,6 +39,13 @@ export class LoginComponent implements OnInit {
   }
 
   /**
+   * goToForgotPassword 
+   */
+  public goToForgotPassword = () => {
+    this.router.navigate(['/forgot-password'])
+  }
+
+  /**
    * logIn
    */
   public logIn = () => {
@@ -54,15 +62,27 @@ export class LoginComponent implements OnInit {
         password: this.password
       }
 
-      this.groupChat.signInFunction(data).subscribe((apiResponse) => {
-        if (apiResponse.status == 200 ) {
-          console.log(apiResponse)
-        } else {
-          this.toastr.error(apiResponse.error)
+      this.groupChat.logInFunction(data).subscribe((apiResponse) => {
+        
+        // console.log("subscriber response"+apiResponse)
+
+        if (apiResponse.status === 200 ) {
+
+         
+          this.cookie.set('authtoken', apiResponse.data.authToken);
+          this.cookie.set('receiverId', apiResponse.data.userDetails.userId);
+          this.cookie.set('receiverName', apiResponse.data.userDetails.firstName + ' ' + apiResponse.data.userDetails.lastName);
+          this.groupChat.setUserInfoInLocalStorage(apiResponse.data.userDetails);
+          this.toastr.success(apiResponse.message)
+         
+        } else  {
+         
+          this.toastr.error(apiResponse.message)
           
         }
       }, (err) => {
-        this.toastr.error('Invalid Email / Password')
+       this.toastr.error('Invalid Email / Password')
+      
       });
     }
     

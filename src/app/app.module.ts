@@ -10,7 +10,7 @@ import { ToastrModule } from 'ngx-toastr';
 import {GroupchatService } from './../app/groupchat.service'
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -31,7 +31,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         { path:'**', component:LoginComponent }
     ])
   ],
-  providers: [GroupchatService],
+  providers: [GroupchatService, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

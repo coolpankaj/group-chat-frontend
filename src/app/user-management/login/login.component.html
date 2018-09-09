@@ -23,7 +23,7 @@
         <div class="form-group">
           <label for="password">Password</label>
           <input [(ngModel)] = "password" type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-          <a><small  class="form-text text-muted float-right">Forgot Password ?</small></a>
+          <a><small  class="form-text text-muted float-right" (click) = "goToForgotPassword()" >Forgot Password ?</small></a>
         </div>
         
         <button type="submit" class="btn btn-primary" (click) = "logIn()">Submit</button>
