@@ -74,6 +74,25 @@ export class ChatsocketService {
       });//end Observable
      }//end onlineUserList
 
+
+
+
+     public sendChatMessage = (chatMsgObject) => {
+      this.socket.emit('chat-msg', chatMsgObject);
+    } // end getChatMessage
+
+
+   
+  public editRoomName = (editedRoomData) => {
+
+    console.log(editedRoomData)
+
+    this.socket.emit('editRoom', editedRoomData);
+
+  } //emitting the edited room value
+
+
+
      public exitSocket = () => {
       this.socket.disconnect();
     }// end exit socket

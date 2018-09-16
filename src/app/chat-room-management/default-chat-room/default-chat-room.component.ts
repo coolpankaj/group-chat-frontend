@@ -4,6 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { GroupchatService } from './../../groupchat.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ChatsocketService } from './../../chatsocket.service';
+import * as $ from 'jquery';
+import { Subscriber } from 'rxjs';
 
 @Component({
   selector: 'app-default-chat-room',
@@ -24,6 +26,11 @@ export class DefaultChatRoomComponent implements OnInit {
     public roomName: String;
     public connectedRoom: String;
     public groupOnlineUsersList = [];
+    public messageList = [];
+    public messageText: String;
+    public scrollToChatTop:boolean= false;
+    public loadingPreviousChat: boolean = false;
+    public editRoom: any;
     
 
 
@@ -85,10 +92,11 @@ export class DefaultChatRoomComponent implements OnInit {
      console.log("fetching active rooms")
      this.chatsocket.getAllActiveGroups().subscribe((activeRoomList) => {
        this.activeRooms = activeRoomList;
-       console.log("active rooms list")
-       console.log(this.activeRooms)
-       console.log("==============================")
+      // console.log("active rooms list")      
+       
      })
+     console.log(this.activeRooms)
+     console.log("==============================")
    }
 
    public groupchatUsers : any = () => {
@@ -102,9 +110,54 @@ export class DefaultChatRoomComponent implements OnInit {
     console.log('========================')
      })
    }
+   public pushToChatWindow  = (data) =>{
+    this.messageText = "";
+    this.messageList.push(data);
+    this.scrollToChatTop = false;
+  }
+
+   public sendMessage: any = () => {
+
+    if(this.messageText){
+  
+      let message = {
+        senderName: this.userInfo.firstName + " " + this.userInfo.lastName,
+        senderId: this.userInfo.userId,
+        receiverName: this.cookie.get('receiverName'),
+        receiverId: this.cookie.get('receiverId'),
+        message: this.messageText,
+        createdOn: new Date()
+      } // end chatMsgObject
+     // console.log(message);
+      this.chatsocket.sendChatMessage(message)
+      this.pushToChatWindow(message) 
+  
+    }
+    else{
+      this.toastr.warning('text message can not be empty')
+  
+    }
+  
+  } // end sendMessage
+   public sendMessageUsingKeyPress = (event:any) =>{
+
+    if(event.keyCode === 13)
+    {
+      this.sendMessage();
+    }
+  }
 
 
-
+public editToRoom = () => {
+  console.log("edit room called")
+  let editedRoomData = {
+                         currentRoomName: this.connectedRoom,
+                         newRoomName: this.editRoom
+                        }
+  
+  this.chatsocket.editRoomName(editedRoomData)
+  this.allActiveGroups()
+}
 
 
 

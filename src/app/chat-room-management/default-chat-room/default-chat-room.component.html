@@ -148,7 +148,7 @@
                     <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px;">
                       <div class="d-flex justify-content-between">
                         <div>{{room}}</div>
-                        <div><span (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button></span></div>
+                        <div><span *ngIf = "room != connectedRoom" (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button></span></div>
                       </div>
                     </li>
                   </div>
@@ -168,7 +168,7 @@
                       <div class="modal-body">
                         <form>
                           <div class="form-group">
-                            <input type="text" class="form-control" name="editRoom" id="editOfRoom" placeholder="edit your room name"
+                            <input type="text" class="form-control" name="editRoom" id="editOfRoom" [(ngModel)] = "editRoom" placeholder="edit your room name"
                               style="background-color: white; color: black;">
                           </div>
                         </form>
@@ -235,7 +235,7 @@
       </div>
       <div class="chat-message clearfix p-2">
         <div class="d-flex justify-content-start flex-fill bd-highlight">
-          <div class="p-2 flex-fill bd-highlight"><textarea name="message-to-send" (keydown)="sendMessageUsingKeyPress($event)"
+          <div class="p-2 flex-fill bd-highlight"><textarea name="message-to-send" (keydown)="sendMessageUsingKeyPress($event)" [(ngModel)]="messageText"
               id="typingPerson" placeholder="Type your message" class="form-control" rows="3">
 
           </textarea></div>
