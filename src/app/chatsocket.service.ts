@@ -25,38 +25,63 @@ export class ChatsocketService {
 
 
 
-   public verifyUser=()=>{
+   public verifyUser = () => {
 
-    return Observable.create((observer)=>{
+    return Observable.create((observer) => {
       
-      this.socket.on('verifyUser',(data)=>{
+      this.socket.on('verifyUser',(data) => {
         observer.next(data);
       });// end Socket
     });//end Observable
    }//end verifyUser
 
      
-     public setUser = (authToken) =>{
+     public setUser = (authToken) => {
       this.socket.emit('set-user', authToken);
     }//end setUser
 
-    public onlineUserList=()=>{
+    public getAllActiveGroups = () => {
+      console.log("get all active groups called.")
+      return Observable.create((observer) => {
+        this.socket.on('allRooms', (activeRoomList) => {
+          observer.next(activeRoomList)
+        })
+      })
+    }
 
-      return Observable.create((observer)=>{
-        this.socket.on('online-user-list',(userList)=>{
+
+    public createRoom = (roomName) => {
+      console.log(roomName)
+        this.socket.emit('create-room', roomName )
+    }
+
+    public onlineUserList = () => {
+
+      return Observable.create((observer) => {
+        this.socket.on('online-user-list',(userList) => {
           observer.next(userList);
         });// end Socket
       });//end Observable
      }//end onlineUserList
 
-     public exitSocket = () =>{
+     public groupOnlineUserList = () => {
+       console.log("group online users called.")
+
+      return Observable.create((observer) => {
+        this.socket.on('group-online-users', (groupOnlineUserList) => {
+          observer.next(groupOnlineUserList);
+        });// end Socket
+      });//end Observable
+     }//end onlineUserList
+
+     public exitSocket = () => {
       this.socket.disconnect();
     }// end exit socket
 
-    public disconnectedSocket=()=>{
+    public disconnectedSocket = () => {
 
-      return Observable.create((observer)=>{
-        this.socket.on('disconnect',()=>{
+      return Observable.create((observer) => {
+        this.socket.on('disconnect',() => {
           observer.next();
         });// end Socket
       });//end Observable

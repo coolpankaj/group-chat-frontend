@@ -64,7 +64,7 @@
               <div class="d-flex justify-content-between">
                 <div><b>
                     Create/Edit room </b></div>
-                <div><span *ngIf="canEdit === 1"><button type="button" data-toggle="modal" data-target="#exampleModalCenter2"
+                <div><span><button type="button" data-toggle="modal" data-target="#exampleModalCenter2"
                       class="btn btn-secondary btn-sm">edit</button></span>&nbsp;&nbsp;&nbsp;&nbsp;
                   <button type="button" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-secondary btn-sm">create</button></div>
               </div>
@@ -87,7 +87,7 @@
                     <div class="modal-body">
                       <form>
                         <div class="form-group">
-                          <input type="text" class="form-control" name="nameOfRoom" id="nameOfRoom" placeholder="room-name"
+                          <input type="text" class="form-control" name="roomName" id="roomName" [(ngModel)] = "roomName" placeholder="Room Name"
                             style="background-color: white; color: black;">
                         </div>
                       </form>
@@ -115,10 +115,22 @@
             <li class="list-group-item" style="background-color:#3D3F4A; color: white;">
               <div class="d-flex justify-content-between">
                 <div><b>Active Rooms</b></div>
-                <div><span (click)="refresh()"><button type="button" class="btn btn-secondary btn-sm">refresh</button></span>
-                </div>
+                <!-- <div><span><button type="button" class="btn btn-secondary btn-sm">refresh</button></span>
+                </div> -->
+               
               </div>
             </li>
+          <!--  <div style="overflow-y: scroll">
+            <div *ngFor="let room of activeRooms">
+              <div>
+                <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px;border: white !important">
+                  <div class="d-flex justify-content-between">
+                    <div>{{room}}</div>
+                  </div>
+                </li>
+              </div>
+            </div>
+           </div> -->
             <div>
               <!--<li class="userPresence" style="margin-left:1%;color: white;">
               <div *ngFor="let room of roomList">
@@ -132,7 +144,7 @@
               </li> -->
               <ul class="list-group userPresence">
                 <div class="onlineAvailableRooms" id="style1">
-                  <div *ngFor="let room of roomList">
+                  <div *ngFor="let room of activeRooms">
                     <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px;">
                       <div class="d-flex justify-content-between">
                         <div>{{room}}</div>

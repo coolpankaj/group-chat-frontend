@@ -8,7 +8,8 @@ import { ChatsocketService } from './../../chatsocket.service';
 @Component({
   selector: 'app-default-chat-room',
   templateUrl: './default-chat-room.component.html',
-  styleUrls: ['./default-chat-room.component.css']
+  styleUrls: ['./default-chat-room.component.css'],
+  providers: [ChatsocketService]
 })
 export class DefaultChatRoomComponent implements OnInit {
 
@@ -19,6 +20,10 @@ export class DefaultChatRoomComponent implements OnInit {
     public userInfo: any;
     public disconnectedSocket: boolean;
     public userList:any = [];
+    public activeRooms = [];
+    public roomName: String;
+    public connectedRoom: String;
+    public groupOnlineUsersList = [];
     
 
 
@@ -28,19 +33,21 @@ export class DefaultChatRoomComponent implements OnInit {
 
   ngOnInit() {
     this.authToken = this.cookie.get('authToken');
-    this.userInfo= this.groupchat.getUserInfoFromLocalStorage();
+    this.userInfo = this.groupchat.getUserInfoFromLocalStorage();
     this.verifyUserConfirmation()
-    this.getOnlineUserList()
+   this.getOnlineUserList()
+   this.allActiveGroups()
   }
 
   public verifyUserConfirmation : any = () =>{
-    console.log("verifyuserconfirmationcalled")
+    console.log("verify user confirmation called")
     this.chatsocket.verifyUser().subscribe((data)=>{
      // console.log(data)
       this.disconnectedSocket = false;
 
       this.chatsocket.setUser(this.authToken);
       this.getOnlineUserList();
+      this.allActiveGroups()
     });
    }
 
@@ -54,9 +61,51 @@ export class DefaultChatRoomComponent implements OnInit {
       let temp = {'userId': userList[x].userId, 'name': userList[x].fullName, 'unread':0,'chatting':false};
       this.userList.push(temp);
     }
+    console.log("user-list")
     console.log(this.userList)
+    console.log("=============================")
   });
   }
+
+
+
+// create group and connected to room
+
+   public connectToRoom : any = () => {
+      console.log(this.roomName)
+     this.chatsocket.createRoom(this.roomName)
+     this.connectedRoom = this.roomName
+     
+      this.allActiveGroups()
+      this.groupchatUsers()      
+     
+   }
+
+   public allActiveGroups : any = () => {
+     console.log("fetching active rooms")
+     this.chatsocket.getAllActiveGroups().subscribe((activeRoomList) => {
+       this.activeRooms = activeRoomList;
+       console.log("active rooms list")
+       console.log(this.activeRooms)
+       console.log("==============================")
+     })
+   }
+
+   public groupchatUsers : any = () => {
+     console.log("fetching Group Chat Users.")
+     this.chatsocket.groupOnlineUserList().subscribe((groupOnlineUsersList) => {
+       this.groupOnlineUsersList = [];
+       this.groupOnlineUsersList = groupOnlineUsersList
+      
+    console.log("group-chat-users")
+    console.log(this.groupOnlineUsersList)
+    console.log('========================')
+     })
+   }
+
+
+
+
 
 
 
