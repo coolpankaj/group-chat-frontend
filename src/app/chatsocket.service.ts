@@ -51,8 +51,10 @@ export class ChatsocketService {
 
 
     public createRoom = (roomName) => {
-      console.log(roomName)
+
+        console.log(roomName)
         this.socket.emit('create-room', roomName )
+
     }
 
     public onlineUserList = () => {
@@ -91,20 +93,24 @@ export class ChatsocketService {
 
   } //emitting the edited room value
 
+  public switchRoom = (joinRoomName) => {
+      this.socket.emit('switch-room', joinRoomName)
+  }
+
 
 
      public exitSocket = () => {
       this.socket.disconnect();
     }// end exit socket
 
-    public disconnectedSocket = () => {
+    /* public disconnectedSocket = () => {
 
       return Observable.create((observer) => {
         this.socket.on('disconnect',() => {
           observer.next();
         });// end Socket
       });//end Observable
-     }//end disconnectedSocket
+     }//end disconnectedSocket */
 
 
 

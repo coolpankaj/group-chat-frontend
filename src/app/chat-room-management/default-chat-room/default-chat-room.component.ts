@@ -6,6 +6,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { ChatsocketService } from './../../chatsocket.service';
 import * as $ from 'jquery';
 import { Subscriber } from 'rxjs';
+//import { join } from 'path';
 
 @Component({
   selector: 'app-default-chat-room',
@@ -159,7 +160,15 @@ public editToRoom = () => {
   this.allActiveGroups()
 }
 
+public changeRoom(joinRoomName) {
+  console.log("switch to room called")
+  console.log(joinRoomName)
+  this.chatsocket.switchRoom(joinRoomName)
+  this.connectedRoom = joinRoomName
+  this.allActiveGroups()
+  this.groupchatUsers()
 
+}
 
 
 
