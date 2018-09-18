@@ -103,14 +103,14 @@ export class ChatsocketService {
       this.socket.disconnect();
     }// end exit socket
 
-    /* public disconnectedSocket = () => {
+    public disconnectedSocket = () => {
 
       return Observable.create((observer) => {
         this.socket.on('disconnect',() => {
           observer.next();
         });// end Socket
       });//end Observable
-     }//end disconnectedSocket */
+     }//end disconnectedSocket 
 
 
 

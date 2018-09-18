@@ -42,12 +42,12 @@
           </li>-->
               <ul class="list-group userPresence;">
                 <div #scrollMee [scrollTop]="scrollMee.scrollHeight" class="onlineUserList">
-                  <div *ngFor="let user of groupOnlineUsersList">
+                  <div *ngFor="let user of userList">
                     <div *ngIf="user.userId != userInfo.userId">
                       <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px; ">
                         <div class="d-flex justify-content-between">
                           <!-- <div>{{user.name}}</div> -->
-                          <div>{{user.fullName}}</div>
+                          <div>{{user.name}}</div>
                         </div>
                       </li>
                     </div>
@@ -89,7 +89,7 @@
                       <form>
                         <div class="form-group">
                           <input type="text" class="form-control" name="roomName" id="roomName" [(ngModel)] = "roomName" placeholder="Room Name"
-                            style="background-color: white; color: black;">
+                            style="background-color: white; color: black;" autofocus>
                         </div>
                       </form>
                     </div>
@@ -148,8 +148,8 @@
                   <div *ngFor="let room of activeRooms">
                     <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px;">
                       <div class="d-flex justify-content-between">
-                        <div>{{room}}</div>
-                        <div><span *ngIf = "room != connectedRoom" (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button></span></div>
+                        <div class="text text-truncate">{{room}}</div>
+                        <div style="overflow: ho"><span *ngIf = "room != connectedRoom" (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button><button type="button" class="btn btn-danger btn-sm" style="margin-left:5px">delete</button></span></div>
                       </div>
                     </li>
                   </div>

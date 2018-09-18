@@ -43,18 +43,18 @@ export class DefaultChatRoomComponent implements OnInit {
     this.authToken = this.cookie.get('authToken');
     this.userInfo = this.groupchat.getUserInfoFromLocalStorage();
     this.verifyUserConfirmation()
-    this.getOnlineUserList()
+    //this.getOnlineUserList()
     this.allActiveGroups()
   }
 
-  public verifyUserConfirmation : any = () =>{
+  public verifyUserConfirmation : any = () => {
     console.log("verify user confirmation called")
     this.chatsocket.verifyUser().subscribe((data)=>{
      // console.log(data)
       this.disconnectedSocket = false;
 
       this.chatsocket.setUser(this.authToken);
-      this.getOnlineUserList();
+      //this.getOnlineUserList();
       this.allActiveGroups()
     });
    }
@@ -85,7 +85,7 @@ export class DefaultChatRoomComponent implements OnInit {
      this.connectedRoom = this.roomName
      
       this.allActiveGroups()
-      this.groupchatUsers()      
+      this.getOnlineUserList()      
      
    }
 
@@ -100,17 +100,7 @@ export class DefaultChatRoomComponent implements OnInit {
      console.log("==============================")
    }
 
-   public groupchatUsers : any = () => {
-     console.log("fetching Group Chat Users.")
-     this.chatsocket.groupOnlineUserList().subscribe((groupOnlineUsersList) => {
-       this.groupOnlineUsersList = [];
-       this.groupOnlineUsersList = groupOnlineUsersList
-      
-    console.log("group-chat-users")
-    console.log(this.groupOnlineUsersList)
-    console.log('========================')
-     })
-   }
+  
    public pushToChatWindow  = (data) =>{
     this.messageText = "";
     this.messageList.push(data);
@@ -168,7 +158,7 @@ public changeRoom(joinRoomName) {
   this.chatsocket.switchRoom(joinRoomName)
   
   this.allActiveGroups()
-  this.groupchatUsers()
+  this.getOnlineUserList()
   
 
 }
@@ -199,6 +189,7 @@ public changeRoom(joinRoomName) {
         this.cookie.delete('receiverId')
         this.cookie.delete('receiverName')
         this.chatsocket.exitSocket()
+        this.chatsocket.disconnectedSocket()
         this.router.navigate(['/'])
       } else {
         this.toastr.error(apiResponse.message)
