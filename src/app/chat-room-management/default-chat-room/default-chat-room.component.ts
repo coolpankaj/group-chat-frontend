@@ -43,8 +43,8 @@ export class DefaultChatRoomComponent implements OnInit {
     this.authToken = this.cookie.get('authToken');
     this.userInfo = this.groupchat.getUserInfoFromLocalStorage();
     this.verifyUserConfirmation()
-   this.getOnlineUserList()
-   this.allActiveGroups()
+    this.getOnlineUserList()
+    this.allActiveGroups()
   }
 
   public verifyUserConfirmation : any = () =>{
@@ -163,10 +163,13 @@ public editToRoom = () => {
 public changeRoom(joinRoomName) {
   console.log("switch to room called")
   console.log(joinRoomName)
-  this.chatsocket.switchRoom(joinRoomName)
+  //this.chatsocket.exitSocket()
   this.connectedRoom = joinRoomName
+  this.chatsocket.switchRoom(joinRoomName)
+  
   this.allActiveGroups()
   this.groupchatUsers()
+  
 
 }
 

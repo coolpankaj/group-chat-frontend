@@ -42,11 +42,12 @@
           </li>-->
               <ul class="list-group userPresence;">
                 <div #scrollMee [scrollTop]="scrollMee.scrollHeight" class="onlineUserList">
-                  <div *ngFor="let user of userList">
+                  <div *ngFor="let user of groupOnlineUsersList">
                     <div *ngIf="user.userId != userInfo.userId">
                       <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px; ">
                         <div class="d-flex justify-content-between">
-                          <div>{{user.name}}</div>
+                          <!-- <div>{{user.name}}</div> -->
+                          <div>{{user.fullName}}</div>
                         </div>
                       </li>
                     </div>
