@@ -98,6 +98,33 @@ export class ChatsocketService {
   }
 
 
+  public chatByUserId = () => {
+    return Observable.create((observer) => {
+          this.socket.on('msg-received', (data) => {
+            observer.next(data)
+          })
+    })
+  }
+
+
+
+  public personTyping = (data) => {
+
+    this.socket.emit('i-am-typing', data)
+
+  }
+
+  public checkIfTyping = () => {
+    return Observable.create((observer) => {
+      this.socket.on('typing', (data) => {
+        observer.next(data)
+      })
+    })
+
+  }
+  
+
+
 
      public exitSocket = () => {
       this.socket.disconnect();

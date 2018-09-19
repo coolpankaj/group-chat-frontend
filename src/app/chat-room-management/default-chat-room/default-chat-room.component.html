@@ -65,7 +65,7 @@
               <div class="d-flex justify-content-between">
                 <div><b>
                     Create/Edit room </b></div>
-                <div><span><button type="button" data-toggle="modal" data-target="#exampleModalCenter2"
+                <div><span><button *ngIf = "connectedRoom != undefined" type="button" data-toggle="modal" data-target="#exampleModalCenter2"
                       class="btn btn-secondary btn-sm">edit</button></span>&nbsp;&nbsp;&nbsp;&nbsp;
                   <button type="button" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-secondary btn-sm">create</button></div>
               </div>
@@ -149,7 +149,10 @@
                     <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px;">
                       <div class="d-flex justify-content-between">
                         <div class="text text-truncate">{{room}}</div>
-                        <div style="overflow: ho"><span *ngIf = "room != connectedRoom" (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button><button type="button" class="btn btn-danger btn-sm" style="margin-left:5px">delete</button></span></div>
+                        <div style="overflow: ho">
+                          <span *ngIf = "room != connectedRoom" (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button><!-- <button type="button" class="btn btn-danger btn-sm" style="margin-left:5px">delete</button> --></span>
+                          <span *ngIf = "room == connectedRoom" ><button type="button" class="btn btn-info btn-sm">disable</button><button type="button" class="btn btn-danger btn-sm" style="margin-left:5px">delete</button></span>
+                        </div>
                       </div>
                     </li>
                   </div>
@@ -236,8 +239,7 @@
       </div>
       <div class="chat-message clearfix p-2">
         <div class="d-flex justify-content-start flex-fill bd-highlight">
-          <div class="p-2 flex-fill bd-highlight"><textarea name="message-to-send" (keydown)="sendMessageUsingKeyPress($event)" [(ngModel)]="messageText"
-              id="typingPerson" placeholder="Type your message" class="form-control" rows="3">
+          <div class="p-2 flex-fill bd-highlight"><textarea name="message-to-send" (keydown) = "iAmTyping()" (keyup) = "iAmNotTyping()" (keydown)="sendMessageUsingKeyPress($event)"  [(ngModel)]="messageText" id="typingPerson" placeholder="Type your message" class="form-control" rows="3">
 
           </textarea></div>
           <div><button (click)="sendMessage()">Send</button></div>

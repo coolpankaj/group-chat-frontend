@@ -5,7 +5,7 @@ import { GroupchatService } from './../../groupchat.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ChatsocketService } from './../../chatsocket.service';
 import * as $ from 'jquery';
-import { Subscriber } from 'rxjs';
+//import { Subscriber } from 'rxjs';
 //import { join } from 'path';
 
 @Component({
@@ -32,6 +32,9 @@ export class DefaultChatRoomComponent implements OnInit {
     public scrollToChatTop:boolean= false;
     public loadingPreviousChat: boolean = false;
     public editRoom: any;
+    public myName: String;
+    public typingPersonName: String;
+    public status: any;
     
 
 
@@ -45,6 +48,7 @@ export class DefaultChatRoomComponent implements OnInit {
     this.verifyUserConfirmation()
     //this.getOnlineUserList()
     this.allActiveGroups()
+
   }
 
   public verifyUserConfirmation : any = () => {
@@ -76,6 +80,16 @@ export class DefaultChatRoomComponent implements OnInit {
   }
 
 
+  public getMessageFromUser = () => {
+
+    this.chatsocket.chatByUserId().subscribe((data) => {
+        this.messageList.push(data)
+        this.toastr.success(`${data.senderName} says ${data.message}`)
+        this.scrollToChatTop = false
+    })
+  
+  }
+
 
 // create group and connected to room
 
@@ -85,7 +99,9 @@ export class DefaultChatRoomComponent implements OnInit {
      this.connectedRoom = this.roomName
      
       this.allActiveGroups()
-      this.getOnlineUserList()      
+      this.getOnlineUserList() 
+      //this.getMessageFromUser()  
+      this.isTyping()   
      
    }
 
@@ -150,6 +166,10 @@ public editToRoom = () => {
   this.allActiveGroups()
 }
 
+
+
+
+
 public changeRoom(joinRoomName) {
   console.log("switch to room called")
   console.log(joinRoomName)
@@ -158,10 +178,62 @@ public changeRoom(joinRoomName) {
   this.chatsocket.switchRoom(joinRoomName)
   
   this.allActiveGroups()
-  this.getOnlineUserList()
-  
+  this.getOnlineUserList()  
+  this.getMessageFromUser()
+  this.isTyping()
 
 }
+
+
+
+public iAmTyping = () => {
+
+  console.log("i am typing called")
+  
+  this.myName = this.userInfo.firstName,
+  this.status = 1
+
+  let data = {
+    myName : this.myName,
+    status: this.status
+
+  }
+  this.chatsocket.personTyping(data)
+  
+}
+
+public  iAmNotTyping = () => {
+
+  console.log("i am not typing called")
+  this.myName = this.userInfo.firstName,
+  this.status = 0
+
+  let data = {
+    myName : this.myName,
+    status: this.status
+
+  }
+  setTimeout(() => {
+    this.chatsocket.personTyping(data)
+  }, 1200);
+  this.isTyping()
+
+}
+
+public isTyping = () => {
+  this.chatsocket.checkIfTyping().subscribe((data) => {
+    console.log(data)
+
+    if (data.status == 1) {
+      this.typingPersonName = data.myName
+    
+    } else {
+      delete this.typingPersonName
+    }
+    console.log(this.typingPersonName)
+  })
+}
+
 
 
 
