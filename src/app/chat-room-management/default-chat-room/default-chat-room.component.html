@@ -151,7 +151,7 @@
                         <div class="text text-truncate">{{room}}</div>
                         <div style="overflow: ho">
                           <span *ngIf = "room != connectedRoom" (click)="changeRoom(room)"><button type="button" class="btn btn-primary btn-sm">join</button><!-- <button type="button" class="btn btn-danger btn-sm" style="margin-left:5px">delete</button> --></span>
-                          <span *ngIf = "room == connectedRoom" ><button type="button" class="btn btn-info btn-sm">disable</button><button type="button" class="btn btn-danger btn-sm" style="margin-left:5px">delete</button></span>
+                          <span *ngIf = "room == connectedRoom" ><button type="button" data-toggle="modal" data-target="#exampleModalCenter3" class="btn btn-success btn-sm" >invite</button><button type="button" class="btn btn-danger btn-sm" style="margin-left:5px" (click) = "deleteThisRoom()" >delete</button></span>
                         </div>
                       </div>
                     </li>
@@ -185,6 +185,32 @@
                     </div>
                   </div>
                 </div>
+<!--------------------------------------------------------------------------------------->
+                <div class="modal fade" id="exampleModalCenter3" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Enter receiver mail</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <form>
+                        <div class="form-group">
+                          <input type="text" class="form-control" name="editRoom" id="editOfRoom" [(ngModel)] = "invitationReceiverMail" placeholder="Enter mail"
+                            style="background-color: white; color: black;">
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" (click) = "invitation()" data-dismiss="modal">Send</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
               </ul>
             </div>
           </ul>

@@ -35,6 +35,8 @@ export class DefaultChatRoomComponent implements OnInit {
     public myName: String;
     public typingPersonName: String;
     public status: any;
+    public pageValue: number = 0;
+    public invitationReceiverMail: String;
     
 
 
@@ -86,6 +88,7 @@ export class DefaultChatRoomComponent implements OnInit {
         this.messageList.push(data)
         this.toastr.success(`${data.senderName} says ${data.message}`)
         this.scrollToChatTop = false
+        console.log(data)
     })
   
   }
@@ -100,19 +103,22 @@ export class DefaultChatRoomComponent implements OnInit {
      
       this.allActiveGroups()
       this.getOnlineUserList() 
-      //this.getMessageFromUser()  
-      this.isTyping()   
+      this.getMessageFromUser()  
+      this.isTyping() 
+      //this.roomNameChanged()  
      
    }
 
    public allActiveGroups : any = () => {
      console.log("fetching active rooms")
+     this.messageList = []
      this.chatsocket.getAllActiveGroups().subscribe((activeRoomList) => {
-       this.activeRooms = activeRoomList;
-      // console.log("active rooms list")      
+       console.log(activeRoomList)
+       this.activeRooms = activeRoomList
+             
        
      })
-     console.log(this.activeRooms)
+     
      console.log("==============================")
    }
 
@@ -154,6 +160,20 @@ export class DefaultChatRoomComponent implements OnInit {
     }
   }
 
+  public roomNameChanged = () => {
+    console.log("room name changed called")
+    this.chatsocket.roomNameEdited().subscribe((editedRoomData) => {
+
+      console.log(editedRoomData)
+
+      this.connectedRoom = editedRoomData.newRoomName
+      this.allActiveGroups()
+      this.getOnlineUserList()
+     // this.changeRoom(editedRoomData.newRoomName)
+  
+    })
+  }
+
 
 public editToRoom = () => {
   console.log("edit room called")
@@ -161,9 +181,12 @@ public editToRoom = () => {
                          currentRoomName: this.connectedRoom,
                          newRoomName: this.editRoom
                         }
+                        
   
   this.chatsocket.editRoomName(editedRoomData)
-  this.allActiveGroups()
+  this.roomNameChanged()
+  
+  
 }
 
 
@@ -181,6 +204,7 @@ public changeRoom(joinRoomName) {
   this.getOnlineUserList()  
   this.getMessageFromUser()
   this.isTyping()
+  //this.roomNameChanged()
 
 }
 
@@ -236,12 +260,50 @@ public isTyping = () => {
 
 
 
+public deleteThisRoom = () => {
+  
+  this.chatsocket.deleteRoom(this.connectedRoom)
+  
+  delete this.connectedRoom
+  this.messageList = []
+  this.allActiveGroups()
+}
+
+
+public loadEarlierPageOfChat:any=()=>{
+  this.loadingPreviousChat=true;
+  this.pageValue++;
+  this.scrollToChatTop=true;
+  this.getPreviousChatOfRoom();
+}
+
+public getPreviousChatOfRoom=()=>{
+  let previousData = (this.messageList.length > 0 ? this.messageList.slice():[])
+  this.chatsocket.getChat(this.connectedRoom,this.pageValue*10).subscribe((apiResponse)=>{
+        //console.log(apiResponse);
+        if(apiResponse.status == 200){
+          this.messageList=apiResponse.data.concat(previousData);
+        }
+        else{
+          this.messageList=previousData;
+          this.toastr.warning("No messages available");
+        }
+        this.loadingPreviousChat=false;
+  },
+  (err)=>{
+    this.toastr.error("some error occurred");
+  });
+}
 
 
 
-
-
-
+public invitation = () => {
+  let tempData = {
+    mailReceiver: this.invitationReceiverMail
+  }
+  this.chatsocket.generateMail(tempData)
+  this.toastr.success("Invitation sent !")
+}
 
 
 

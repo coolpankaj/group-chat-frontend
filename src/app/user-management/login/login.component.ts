@@ -75,9 +75,10 @@ export class LoginComponent implements OnInit {
           this.cookie.set('receiverName', apiResponse.data.userDetails.firstName + ' ' + apiResponse.data.userDetails.lastName);
           this.groupChat.setUserInfoInLocalStorage(apiResponse.data.userDetails);
           this.toastr.success(apiResponse.message)
-          setTimeout(() => {
+         /*  setTimeout(() => {
             this.router.navigate(['/defaultChatRoom'])
-          }, 1500);
+          }, 1500); */
+          this.router.navigate(['/defaultChatRoom'])
          
         } else  {
          

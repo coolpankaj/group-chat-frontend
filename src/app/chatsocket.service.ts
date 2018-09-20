@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as io from 'socket.io-client';
-import { Observable } from 'rxjs';
-//import { CookieService } from 'ngx-cookie-service';
+import { Observable, observable } from 'rxjs';
+import { CookieService } from 'ngx-cookie-service';
 
 //import 'rxjs/add/operator/catch';
 //import 'rxjs/add/operator/do';
@@ -17,7 +17,7 @@ export class ChatsocketService {
   private url = "http://localhost:3000/";
   private socket;
 
-  constructor( private http: HttpClient) {
+  constructor( private http: HttpClient, public cookie: CookieService) {
  
     this.socket = io(this.url);
       console.log("chat socket service called.")
@@ -90,8 +90,20 @@ export class ChatsocketService {
     console.log(editedRoomData)
 
     this.socket.emit('editRoom', editedRoomData);
+    
 
   } //emitting the edited room value
+
+  public roomNameEdited = () =>{
+
+    
+    return Observable.create((observer) => {
+      this.socket.on('room-name-edited', (editedRoomData) => {
+        console.log("roomNameedited from service")
+        observer.next(editedRoomData)
+      })
+    })
+  }
 
   public switchRoom = (joinRoomName) => {
       this.socket.emit('switch-room', joinRoomName)
@@ -122,9 +134,23 @@ export class ChatsocketService {
     })
 
   }
+
+  public deleteRoom = (roomName) => {
+    this.socket.emit('deleteThisRoom', roomName)
+
+  }
   
+  public generateMail = (tempData) => {
+    this.socket.emit('invitaion-mail', tempData)
+  }
 
 
+
+  public getChat(nameOfRoom, skip): Observable<any> {
+
+    return this.http.get(`${this.url}api/v1/chat/get/for/group?skip=${skip}&chatRoom=${nameOfRoom}&authToken=${this.cookie.get('authToken')}`)
+      //.do(data => console.log('Data Received'));
+  }
 
      public exitSocket = () => {
       this.socket.disconnect();
