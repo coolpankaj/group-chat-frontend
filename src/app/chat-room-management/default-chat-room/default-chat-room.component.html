@@ -41,7 +41,7 @@
             </div>
           </li>-->
               <ul class="list-group userPresence;">
-                <div #scrollMee [scrollTop]="scrollMee.scrollHeight" class="onlineUserList">
+                <div  class="onlineUserList">
                   <div *ngFor="let user of userList">
                     <div *ngIf="user.userId != userInfo.userId">
                       <li class="list-group-item" style="background-color:#3D3F4A; color: white; height: 50px; padding: 5px 20px; ">
@@ -199,14 +199,14 @@
                     <div class="modal-body">
                       <form>
                         <div class="form-group">
-                          <input type="text" class="form-control" name="editRoom" id="editOfRoom" [(ngModel)] = "invitationReceiverMail" placeholder="Enter mail"
-                            style="background-color: white; color: black;">
+                          <input type="text" class="form-control" name="editRoom" id="editOfRoom" [(ngModel)] = "invitationReceiverMail" placeholder="Enter mail" required
+                            style="background-color: white; color: black;" >
                         </div>
                       </form>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary" (click) = "invitation()" data-dismiss="modal">Send</button>
+                      <button type="button" class="btn btn-primary" (click) = "invitation()" >Send</button>
                     </div>
                   </div>
                 </div>

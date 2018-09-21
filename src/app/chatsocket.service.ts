@@ -135,9 +135,48 @@ export class ChatsocketService {
 
   }
 
+
+  public iJoinTheRoom = () => {
+
+    return Observable.create((obserever) => {
+      this.socket.on('joinedRoom', (fullName) => {
+        obserever.next(fullName)
+      })
+    })
+
+  }
+
+
+  public iLeftTheRoom = () => {
+
+    return Observable.create((obserever) => {
+      this.socket.on('leftRoom', (fullName) => {
+        obserever.next(fullName)
+      })
+    })
+    
+  }
+
+
+
+
+
+
+
+
   public deleteRoom = (roomName) => {
     this.socket.emit('deleteThisRoom', roomName)
 
+  }
+
+  public confirmDeletion = () => {
+
+    return Observable.create((obserever) => {
+      this.socket.on('room-deleted', () => {
+        obserever.next()
+      })
+    })
+    
   }
   
   public generateMail = (tempData) => {

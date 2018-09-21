@@ -79,6 +79,8 @@ export class DefaultChatRoomComponent implements OnInit {
     console.log(this.userList)
     console.log("=============================")
   });
+  this.newUserJoining()
+  this.userLeftTheRoom()
   }
 
 
@@ -106,6 +108,7 @@ export class DefaultChatRoomComponent implements OnInit {
       this.getMessageFromUser()  
       this.isTyping() 
       //this.roomNameChanged()  
+      this.confirmDeletionRoom()
      
    }
 
@@ -204,8 +207,24 @@ public changeRoom(joinRoomName) {
   this.getOnlineUserList()  
   this.getMessageFromUser()
   this.isTyping()
+  //this.newUserJoining()
   //this.roomNameChanged()
+  this.confirmDeletionRoom()
 
+}
+
+public newUserJoining = () => {
+  this.chatsocket.iJoinTheRoom().subscribe((fullName) => {
+    console.log(fullName + " join the room")
+    this.toastr.info(`${fullName} join the room`)
+  })
+}
+
+public userLeftTheRoom = () => {
+  this.chatsocket.iLeftTheRoom().subscribe((fullName) => {
+    console.log(fullName + " left the room")
+    this.toastr.info(`${fullName} left the room`)
+  })
 }
 
 
@@ -261,12 +280,25 @@ public isTyping = () => {
 
 
 public deleteThisRoom = () => {
+
+  this.toastr.success(`${this.connectedRoom} is deleted`)
   
   this.chatsocket.deleteRoom(this.connectedRoom)
   
   delete this.connectedRoom
-  this.messageList = []
+ 
   this.allActiveGroups()
+  this.getOnlineUserList()
+  //this.userList = []
+  delete this.connectedRoom
+  this.confirmDeletionRoom
+  
+}
+
+public confirmDeletionRoom = () => {
+    this.chatsocket.confirmDeletion().subscribe(() => {
+      delete this.connectedRoom
+    })
 }
 
 
@@ -298,11 +330,18 @@ public getPreviousChatOfRoom=()=>{
 
 
 public invitation = () => {
-  let tempData = {
-    mailReceiver: this.invitationReceiverMail
+
+  if (this.invitationReceiverMail == "" || this.invitationReceiverMail == undefined) {
+    this.toastr.warning("Enter email")
+    return false
+  } else {
+    let tempData = {
+      mailReceiver: this.invitationReceiverMail
+    }
+    this.chatsocket.generateMail(tempData)
+    this.toastr.success("Invitation sent !")
   }
-  this.chatsocket.generateMail(tempData)
-  this.toastr.success("Invitation sent !")
+  
 }
 
 
