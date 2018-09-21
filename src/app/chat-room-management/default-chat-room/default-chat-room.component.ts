@@ -147,6 +147,7 @@ export class DefaultChatRoomComponent implements OnInit {
      // console.log(message);
       this.chatsocket.sendChatMessage(message)
       this.pushToChatWindow(message) 
+      
   
     }
     else{

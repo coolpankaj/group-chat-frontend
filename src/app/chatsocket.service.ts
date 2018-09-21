@@ -178,6 +178,9 @@ export class ChatsocketService {
     })
     
   }
+
+  
+
   
   public generateMail = (tempData) => {
     this.socket.emit('invitaion-mail', tempData)
