@@ -70,6 +70,19 @@ export class ChatsocketService {
 
 
 
+    public deActiveGroup = (data) => {
+     this.socket.emit('deActivateRoom', data)
+    }
+
+    public deActivateGroupDB(data): Observable<any> {
+
+      const params = new HttpParams()
+      .set ( 'authToken', data.authToken)
+      .set( 'title', data.roomName)
+
+        return this.http.put(`${this.url}api/v1/group/deactive`, params)
+    }
+
 
 
 
@@ -107,12 +120,13 @@ export class ChatsocketService {
 
 
    
-  public editRoomName = (editedRoomData) => {
+  public editRoomName(editedRoomData): Observable<any> {
 
-    console.log(editedRoomData)
+    const params = new HttpParams()
+    .set( 'authToken', editedRoomData.authToken)
+    .set('title', editedRoomData.newRoomName)
 
-    this.socket.emit('editRoom', editedRoomData);
-    
+    return this.http.put(`${this.url}api/v1/group/edit`, params)
 
   } //emitting the edited room value
 
@@ -180,6 +194,18 @@ export class ChatsocketService {
   }
 
 
+  public deactivedGroup = () => {
+    return Observable.create((observer) => {
+      this.socket.on('group-deactivated', (name) => {
+        observer.next(name)
+      })
+    })
+  }
+
+
+
+
+
 
 
 
@@ -228,6 +254,11 @@ export class ChatsocketService {
         });// end Socket
       });//end Observable
      }//end disconnectedSocket 
+     
+
+     public disconnect = () => {
+       this.socket.emit('disconnect')
+     }
 
 
      public createGroup(data): Observable<any> {

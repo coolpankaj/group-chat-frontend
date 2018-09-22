@@ -5,7 +5,7 @@ import { GroupchatService } from './../../groupchat.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ChatsocketService } from './../../chatsocket.service';
 import * as $ from 'jquery';
-import { del } from 'selenium-webdriver/http';
+//import { del } from 'selenium-webdriver/http';
 //import { Subscriber } from 'rxjs';
 //import { join } from 'path';
 
@@ -67,6 +67,7 @@ export class DefaultChatRoomComponent implements OnInit {
       this.chatsocket.setUser(this.authToken);
       //this.getOnlineUserList();
       this.allActiveGroups()
+      this.groupDeactivated()
       
     });
    }
@@ -117,6 +118,7 @@ export class DefaultChatRoomComponent implements OnInit {
       //this.roomNameChanged()  
       this.newUserJoining()
       this.userLeftTheRoom()
+     
       
      
    }
@@ -143,6 +145,63 @@ export class DefaultChatRoomComponent implements OnInit {
         this.toastr.error(err.message)
       })
     }
+
+
+
+    public deActivateRoom = (room) => {
+      console.log("deactivated room called " + room)
+
+      let data = {
+        authToken: this.authToken,
+        roomName: this.connectedRoom
+      }
+
+      console.log(data)
+
+      this.chatsocket.deActivateGroupDB(data).subscribe((apiResponse) => {
+
+        if (apiResponse.status == 200) {
+
+
+          this.chatsocket.deActiveGroup(data)
+          //this.allActiveGroups()
+          //this.getOnlineUserList()
+          this.groupDeactivated()
+          
+
+        } else {
+          this.toastr.error(apiResponse.message)
+        }
+      }, (err) => {
+        this.toastr.error(err.message)
+      })
+
+      delete this.connectedRoom
+      this.allActiveGroups()
+      this.getOnlineUserList()
+        
+    }
+
+
+public groupDeactivated = () => {
+
+  
+  this.chatsocket.deactivedGroup().subscribe((name) => {
+
+    if (this.connectedRoom == name) {
+      delete this.connectedRoom
+    }
+
+    this.toastr.warning(` Group ${name} is deactivated`)
+  })
+  
+}
+
+
+
+
+
+
 
 
 
@@ -253,13 +312,22 @@ export class DefaultChatRoomComponent implements OnInit {
 public editToRoom = () => {
   console.log("edit room called")
   let editedRoomData = {
-                         currentRoomName: this.connectedRoom,
+                         authToken: this.authToken,
                          newRoomName: this.editRoom
                         }
                         
   
-  this.chatsocket.editRoomName(editedRoomData)
-  this.roomNameChanged()
+  this.chatsocket.editRoomName(editedRoomData).subscribe((apiResponse) => {
+    if (apiResponse.status == 200) {
+      this.toastr.success("room name edited")
+    } else {
+      this.toastr.error(apiResponse.message)
+    }
+  }, (err) => {
+    this.toastr.error(err.message)
+  })
+  //this.roomNameChanged()
+
   
   
 }
@@ -282,6 +350,11 @@ public editToRoom = () => {
 
 
 public changeRoom(joinRoomName) {
+
+  if (this.connectedRoom ! = undefined) {
+    console.log('changeRoom if condition')
+    this.chatsocket.disconnect()
+  }
   console.log("switch to room called")
   console.log(joinRoomName)
   //this.chatsocket.exitSocket()
