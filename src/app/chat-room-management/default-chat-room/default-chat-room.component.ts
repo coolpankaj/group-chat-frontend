@@ -5,6 +5,7 @@ import { GroupchatService } from './../../groupchat.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ChatsocketService } from './../../chatsocket.service';
 import * as $ from 'jquery';
+import { del } from 'selenium-webdriver/http';
 //import { Subscriber } from 'rxjs';
 //import { join } from 'path';
 
@@ -37,6 +38,9 @@ export class DefaultChatRoomComponent implements OnInit {
     public status: any;
     public pageValue: number = 0;
     public invitationReceiverMail: String;
+    public joinroomPersonName: String;
+    public leaveroomPersonName: String;
+   
     
 
 
@@ -49,7 +53,8 @@ export class DefaultChatRoomComponent implements OnInit {
     this.userInfo = this.groupchat.getUserInfoFromLocalStorage();
     this.verifyUserConfirmation()
     //this.getOnlineUserList()
-    this.allActiveGroups()
+    //this.allActiveGroups()
+    
 
   }
 
@@ -62,6 +67,7 @@ export class DefaultChatRoomComponent implements OnInit {
       this.chatsocket.setUser(this.authToken);
       //this.getOnlineUserList();
       this.allActiveGroups()
+      
     });
    }
 
@@ -79,18 +85,18 @@ export class DefaultChatRoomComponent implements OnInit {
     console.log(this.userList)
     console.log("=============================")
   });
-  this.newUserJoining()
-  this.userLeftTheRoom()
+  //this.newUserJoining()
+  //this.userLeftTheRoom()
   }
 
 
   public getMessageFromUser = () => {
 
     this.chatsocket.chatByUserId().subscribe((data) => {
-        this.messageList.push(data)
-        this.toastr.success(`${data.senderName} says ${data.message}`)
+        this.messageList.push(data)        
         this.scrollToChatTop = false
         console.log(data)
+        this.toastr.success(`${data.senderName} says ${data.message}`)
     })
   
   }
@@ -102,28 +108,93 @@ export class DefaultChatRoomComponent implements OnInit {
       console.log(this.roomName)
      this.chatsocket.createRoom(this.roomName)
      this.connectedRoom = this.roomName
-     
+     delete this.roomName
       this.allActiveGroups()
+     //this.getAllGroup()
       this.getOnlineUserList() 
       this.getMessageFromUser()  
       this.isTyping() 
       //this.roomNameChanged()  
-      this.confirmDeletionRoom()
+      this.newUserJoining()
+      this.userLeftTheRoom()
+      
      
    }
+
+    public createRoom = () => {
+      console.log("create room called")
+      let data = {
+        title: this.roomName,
+        authToken: this.authToken
+      }
+      console.log(data)
+      //delete this.roomName
+      this.chatsocket.createGroup(data).subscribe((apiResponse) => {
+        console.log(apiResponse)
+        if (apiResponse.status == 200 ) {
+          console.log("room created")
+           this.connectToRoom()
+          //this.getAllGroup()
+        } else {
+            this.toastr.warning(apiResponse.message)
+            return false
+        }
+      }, (err) => {
+        this.toastr.error(err.message)
+      })
+    }
+
+
 
    public allActiveGroups : any = () => {
      console.log("fetching active rooms")
      this.messageList = []
      this.chatsocket.getAllActiveGroups().subscribe((activeRoomList) => {
-       console.log(activeRoomList)
+       
        this.activeRooms = activeRoomList
              
        
      })
-     
+     console.log(this.activeRooms)
      console.log("==============================")
    }
+
+/*    public getAllGroup = () => {
+     console.log("get all groups called")
+     let data = {
+       authToken: this.authToken
+     }
+     this.chatsocket.activeGroups(data).subscribe((apiResponse) => {
+       console.log(apiResponse)
+       if (apiResponse.status == 200) {
+         /* //this.allActiveGroups()
+         console.log(apiResponse.data)
+         let title
+         this.activeRooms = []
+         for ( let pointer of apiResponse.data) {
+          
+           title = pointer.chatGroupTitle
+         this.activeRooms.push(title) 
+        } 
+           this.connectToRoom()
+           //console.log(this.activeRooms)
+       } else {
+            this.toastr.error(apiResponse.message)
+       }
+     }, (err) => {
+       this.toastr.error(err.message)
+     })
+   } */
+
+
+
+
+
+
+
+
+
+
 
   
    public pushToChatWindow  = (data) =>{
@@ -193,6 +264,19 @@ public editToRoom = () => {
   
 }
 
+/* public joinRoom(joinRoomName){
+  console.log("join-room called")
+  if (this.connectedRoom) {
+    this.changeRoom(joinRoomName)
+  }
+  let data = {
+    userId: this.userInfo.userId,
+    fullName: this.userInfo.fullName,
+    roomName: joinRoomName
+  }
+  this.chatsocket.joinRoom(data)
+}
+ */
 
 
 
@@ -215,24 +299,36 @@ public changeRoom(joinRoomName) {
 }
 
 public newUserJoining = () => {
+  
   this.chatsocket.iJoinTheRoom().subscribe((fullName) => {
-    console.log(fullName + " join the room")
-    this.toastr.info(`${fullName} join the room`)
+    console.log(fullName + " join")
+    this.joinroomPersonName = fullName
+   // this.toastr.info(`${this.joinroomPersonName} join`)
+    //delete this.joinroomPersonName
+    this.toastr.info(`${this.joinroomPersonName} join`)
+  delete this.joinroomPersonName
+   
   })
+  
 }
 
 public userLeftTheRoom = () => {
   this.chatsocket.iLeftTheRoom().subscribe((fullName) => {
-    console.log(fullName + " left the room")
-    this.toastr.info(`${fullName} left the room`)
+    console.log(fullName + " left ")
+    this.leaveroomPersonName = fullName
+    //this.toastr.info(`${this.leaveroomPersonName} left`)
+    //delete this.leaveroomPersonName
+    this.toastr.info(`${this.leaveroomPersonName} left`)
+    delete this.leaveroomPersonName
   })
+ 
 }
 
 
 
 public iAmTyping = () => {
 
-  console.log("i am typing called")
+ // console.log("i am typing called")
   
   this.myName = this.userInfo.firstName,
   this.status = 1
@@ -248,7 +344,7 @@ public iAmTyping = () => {
 
 public  iAmNotTyping = () => {
 
-  console.log("i am not typing called")
+ // console.log("i am not typing called")
   this.myName = this.userInfo.firstName,
   this.status = 0
 
@@ -282,35 +378,66 @@ public isTyping = () => {
 
 public deleteThisRoom = () => {
 
-  this.toastr.success(`${this.connectedRoom} is deleted`)
+  
   
   this.chatsocket.deleteRoom(this.connectedRoom)
   
-  delete this.connectedRoom
+  
+ 
+  
+  //this.getOnlineUserList()
+  //this.userList = []
+  //delete this.connectedRoom
  
   this.allActiveGroups()
-  this.getOnlineUserList()
-  //this.userList = []
-  delete this.connectedRoom
-  this.confirmDeletionRoom
+  this.confirmDeletionRoom()
+  this.toastr.success(`Room is deleted`)
   
 }
 
-public confirmDeletionRoom = () => {
-    this.chatsocket.confirmDeletion().subscribe(() => {
-      delete this.connectedRoom
-    })
+public confirmDeletionRoom: any = () => {
+  this.chatsocket.confirmDeletion().subscribe(() => { 
+    delete this.connectedRoom    
+    return true   
+  })
+  
 }
 
 
-public loadEarlierPageOfChat:any=()=>{
+
+public deleteRoom = () => {
+console.log("delete room called")
+  let data = {
+    title: this.connectedRoom,
+    authToken: this.authToken
+  }
+  console.log(data)
+  this.chatsocket.deleteGroup(data).subscribe((apiResponse) => {
+    console.log(apiResponse)
+    if (apiResponse.status == 200 ) {
+      console.log("room deleted")
+      this.deleteThisRoom()
+    } else {
+        this.toastr.warning(apiResponse.message)
+        return false
+    }
+  }, (err) => {
+    this.toastr.error(err.message)
+  })
+
+}
+
+
+
+
+public loadEarlierPageOfChat: any = () => {
   this.loadingPreviousChat=true;
   this.pageValue++;
   this.scrollToChatTop=true;
   this.getPreviousChatOfRoom();
 }
 
-public getPreviousChatOfRoom=()=>{
+public getPreviousChatOfRoom = () => {
   let previousData = (this.messageList.length > 0 ? this.messageList.slice():[])
   this.chatsocket.getChat(this.connectedRoom,this.pageValue*10).subscribe((apiResponse)=>{
         //console.log(apiResponse);
@@ -324,7 +451,7 @@ public getPreviousChatOfRoom=()=>{
         this.loadingPreviousChat=false;
   },
   (err)=>{
-    this.toastr.error("some error occurred");
+    this.toastr.error(err.message);
   });
 }
 
@@ -340,6 +467,7 @@ public invitation = () => {
       mailReceiver: this.invitationReceiverMail
     }
     this.chatsocket.generateMail(tempData)
+    delete this.invitationReceiverMail
     this.toastr.success("Invitation sent !")
   }
   
@@ -363,13 +491,13 @@ public invitation = () => {
         this.cookie.delete('receiverId')
         this.cookie.delete('receiverName')
         this.chatsocket.exitSocket()
-        this.chatsocket.disconnectedSocket()
+       // this.chatsocket.disconnectedSocket()
         this.router.navigate(['/'])
       } else {
         this.toastr.error(apiResponse.message)
       }
     }, (err) => {
-      this.toastr.error("something went wrong !")
+      this.toastr.error(err.message)
     }) 
   }
 

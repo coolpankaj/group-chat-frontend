@@ -50,12 +50,34 @@ export class ChatsocketService {
     }
 
 
+    public activeGroups(data): Observable<any> {
+    
+
+      return this.http.get(`${this.url}api/v1/group/all?authToken=${data.authToken}`)
+    }
+
+
     public createRoom = (roomName) => {
 
        console.log(roomName)
         this.socket.emit('create-room', roomName )
 
     }
+
+  /*   public joinRoom = (data) => {
+        this.socket.emit('join-room', data)
+    } */
+
+
+
+
+
+
+
+
+
+
+
 
     public onlineUserList = () => {
 
@@ -208,6 +230,42 @@ export class ChatsocketService {
      }//end disconnectedSocket 
 
 
+     public createGroup(data): Observable<any> {
+
+      const params = new HttpParams()
+      .set( 'title', data.title)
+      .set ( 'authToken', data.authToken)
+    
+
+         return this.http.post(`${this.url}api/v1/group/create`, params)       
+
+
+     }
+
+     public deleteGroup(data): Observable<any> {
+
+      const params = new HttpParams()
+      .set( 'title', data.title)
+      .set ( 'authToken', data.authToken)
+    
+
+         return this.http.post(`${this.url}api/v1/group/delete`, params)       
+
+
+     }
+
+
+     public handleError(err: HttpErrorResponse){
+      let errorMessage = '';
+      if(err.error instanceof Error){
+        errorMessage=`An error occurred: ${err.error.message}`;
+       }
+       else {
+        errorMessage=`Server returned code: ${err.status}, error message is : ${err.error.message}`;
+           }//endcondition *if
+       console.error(errorMessage);
+       return Observable.throw;
+      }//end HandleError
 
 
 

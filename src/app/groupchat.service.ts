@@ -92,4 +92,17 @@ export class GroupchatService {
     return this.http.post(`${this.baseUrl}/${data.userId}/logout`, params)
   }
 
+
+  public handleError(err: HttpErrorResponse){
+    let errorMessage = '';
+    if(err.error instanceof Error){
+      errorMessage=`An error occurred: ${err.error.message}`;
+     }
+     else {
+      errorMessage=`Server returned code: ${err.status}, error message is : ${err.error.message}`;
+         }//endcondition *if
+     console.error(errorMessage);
+     return Observable.throw;
+    }//end HandleError
+
 }
